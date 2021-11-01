@@ -2,11 +2,9 @@ package desensitivity
 
 import (
 	"fmt"
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type testStruct struct {
@@ -17,18 +15,6 @@ type testStruct struct {
 }
 
 func TestEncryptStruct(t *testing.T) {
-	type account struct {
-		Id    primitive.ObjectID `json:"-"`
-		Name  string             `json:"name"`
-		Phone SenString          `json:"phone"` // string 替换为 SenString
-	}
-
-	acc := &account{
-		Name:  "111111111111111111",
-		Phone: "13333333333",
-	}
-	log.Printf("%v\n", acc)
-
 	tu := &testStruct{
 		Phone: "13300000000",
 		Name:  "张三",
@@ -39,11 +25,11 @@ func TestEncryptStruct(t *testing.T) {
 		},
 	}
 
-	err := EncryptStruct(acc)
+	err := EncryptStruct(tu)
 	assert.NoError(t, err)
 
 	assert.Equal(t, tu.Phone.Value(), "133@11@ENC@92f79f0118437ee3c9810158fca9a082@ZBe+NDOAnCR8EMhYli/7Uw==@0000")
-	fmt.Printf("%#v\n", acc)
+	fmt.Printf("%#v\n", tu)
 }
 
 func TestDecryptStruct(t *testing.T) {
