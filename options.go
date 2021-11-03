@@ -31,8 +31,8 @@ func GetOption(opts ...Optional) *Options {
 		tag:        defaultOptions.tag,
 		step:       defaultOptions.step,
 		encryptKey: defaultOptions.encryptKey,
-		encryptFn:  aesEncrypt,
-		decryptFn:  aesDecrypt,
+		encryptFn:  encryptString,
+		decryptFn:  decryptString,
 	}
 	if len(opts) > 0 {
 		for _, o := range opts {
@@ -52,10 +52,10 @@ func getDefaultOption(opt ...*Options) *Options {
 		option = opt[0]
 	}
 	if option.encryptFn == nil {
-		option.encryptFn = aesEncrypt
+		option.encryptFn = encryptString
 	}
 	if option.decryptFn == nil {
-		option.decryptFn = aesDecrypt
+		option.decryptFn = decryptString
 	}
 	if option.step == "" {
 		option.step = defaultOptions.step
@@ -87,7 +87,7 @@ func WithEncryptKey(p string) Optional {
 // WithEncryptFunc
 func WithEncryptFunc(f EncryptFunc) Optional {
 	return func(s *Options) {
-		s.encryptFn = aesEncrypt
+		s.encryptFn = encryptString
 		if f != nil {
 			s.encryptFn = f
 		}
@@ -97,7 +97,7 @@ func WithEncryptFunc(f EncryptFunc) Optional {
 // WithDecryptFunc
 func WithDecryptFunc(f DecryptFunc) Optional {
 	return func(s *Options) {
-		s.decryptFn = aesDecrypt
+		s.decryptFn = decryptString
 		if f != nil {
 			s.decryptFn = f
 		}

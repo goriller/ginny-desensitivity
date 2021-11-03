@@ -2,6 +2,7 @@ package desensitivity
 
 import (
 	"fmt"
+	"io/ioutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -137,4 +138,17 @@ func TestDecryptMap(t *testing.T) {
 	assert.NoError(t, err)
 	fmt.Printf("%#v\n", tu["Struct"])
 	fmt.Printf("%#v\n", tu)
+}
+
+func TestEncryptFile(t *testing.T) {
+	plaintext, err := ioutil.ReadFile("./go.mod")
+	assert.NoError(t, err)
+
+	bt, err := EncryptFile(plaintext)
+	assert.NoError(t, err)
+	fmt.Printf("%#v\n", string(bt))
+
+	bt, err = DecryptFile(bt)
+	assert.NoError(t, err)
+	fmt.Printf("%#v\n", string(bt))
 }

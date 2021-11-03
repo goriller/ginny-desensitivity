@@ -14,8 +14,10 @@ import (
 	"github.com/gorillazer/ginny-encrypt/aes"
 )
 
-// EncryptStr
-func EncryptStr(iv, data string) (string, error) {
+var encryptFileLen = 100
+
+// AesEncrypt
+func AesEncrypt(iv, data string) (string, error) {
 	cipher := aes.NewCBC()
 	bt, err := cipher.Encrypt([]byte(iv), []byte(data))
 	if err != nil {
@@ -25,8 +27,8 @@ func EncryptStr(iv, data string) (string, error) {
 	return str, nil
 }
 
-// DecryptStr
-func DecryptStr(iv, data string) (string, error) {
+// AesDecrypt
+func AesDecrypt(iv, data string) (string, error) {
 	cipher := aes.NewCBC()
 	b, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {
@@ -39,14 +41,14 @@ func DecryptStr(iv, data string) (string, error) {
 	return string(bt), nil
 }
 
-// aesEncrypt
-func aesEncrypt(field string, opt *Options) (string, error) {
-	return EncryptField(field, opt)
+// encryptString
+func encryptString(field string, opt *Options) (string, error) {
+	return EncryptString(field, opt)
 }
 
-// aesDecrypt
-func aesDecrypt(field string, opt *Options) (string, error) {
-	return DecryptField(field, opt)
+// decryptString
+func decryptString(field string, opt *Options) (string, error) {
+	return DecryptString(field, opt)
 }
 
 // isEncryptText
@@ -56,10 +58,10 @@ func isEncryptText(text string, opt ...*Options) bool {
 		strings.Contains(text, fmt.Sprintf("%s%s%s", option.step, option.tag, option.step))
 }
 
-// EncryptField
+// EncryptString
 // 输入明文字段,自动加密
 // 如果修改了加密配置，需要传入配置
-func EncryptField(field string, opt ...*Options) (string, error) {
+func EncryptString(field string, opt ...*Options) (string, error) {
 	// options
 	option := getDefaultOption(opt...)
 	// 判断是否密文
@@ -71,7 +73,7 @@ func EncryptField(field string, opt ...*Options) (string, error) {
 	hashKey1 := string([]rune(sha256Crypt(key1))[:32])
 	encryptKey3 := md5Crypt(hashKey1 + option.encryptKey)
 
-	encryptText, err := EncryptStr(encryptKey3, field)
+	encryptText, err := AesEncrypt(encryptKey3, field)
 	if err != nil {
 		return "", err
 	}
@@ -82,10 +84,10 @@ func EncryptField(field string, opt ...*Options) (string, error) {
 		hashKey1, option.step, encryptText, option.step, subfix), nil
 }
 
-// DecryptField
+// DecryptString
 // 输入密文字段,自动解密
 // 如果修改了加密配置，需要传入配置
-func DecryptField(text string, opt ...*Options) (string, error) {
+func DecryptString(text string, opt ...*Options) (string, error) {
 	// options
 	option := getDefaultOption(opt...)
 	// 判断是否密文
@@ -100,11 +102,61 @@ func DecryptField(text string, opt ...*Options) (string, error) {
 		return "", fmt.Errorf("not a correct encrypted string")
 	}
 	encryptKey3 := md5Crypt(hashKey1 + option.encryptKey)
-	dText, err := DecryptStr(encryptKey3, encryptText)
+	dText, err := AesDecrypt(encryptKey3, encryptText)
 	if err != nil {
 		return "", err
 	}
 	return dText, nil
+}
+
+// EncryptFile
+// 加密存储文件,只加密头部encryptFileLen长度的内容，再拼接加密+非加密内容存储
+func EncryptFile(plaintext []byte, opt ...*Options) ([]byte, error) {
+	var (
+		toEncrData   []byte
+		toAppendData []byte
+	)
+	if len(plaintext) <= encryptFileLen {
+		toEncrData = plaintext
+	} else {
+		toEncrData = plaintext[:encryptFileLen]
+		toAppendData = plaintext[encryptFileLen:]
+	}
+
+	cipher := aes.NewCFB()
+	option := getDefaultOption(opt...)
+	key := md5Crypt(option.encryptKey)
+	encrData, err := cipher.Encrypt([]byte(key), toEncrData)
+	if err != nil {
+		return nil, err
+	}
+	dst := append(encrData, toAppendData...)
+	return dst, nil
+}
+
+// DecryptFile
+// 加密文件解密
+func DecryptFile(fileData []byte, opt ...*Options) ([]byte, error) {
+	var (
+		encryptedData   []byte
+		unEncryptedData []byte
+	)
+	if len(fileData) <= encryptFileLen+16 {
+		encryptedData = fileData
+	} else {
+		encryptedData = fileData[:encryptFileLen+16]
+		unEncryptedData = fileData[encryptFileLen+16:]
+	}
+
+	cipher := aes.NewCFB()
+	option := getDefaultOption(opt...)
+	key := md5Crypt(option.encryptKey)
+	encrData, err := cipher.Decrypt([]byte(key), encryptedData)
+	if err != nil {
+		return nil, err
+	}
+	dst := append(encrData, unEncryptedData...)
+	return dst, nil
 }
 
 // EncryptStruct
