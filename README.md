@@ -135,6 +135,6 @@ fmt.Printf("%#v\n", acc)
 
     类型 | 加密支持类型 | 备注 |
     --- | --- | --- |
-    struct | struct 或 *struct | 支持嵌套嵌套 []string、[]struct、[]*struct、map[string]interface
-    map | map[string]interface{} | 仅支持 map[string]string 类型值
+    struct | struct 或 *struct | 支持嵌套 []string、[]struct、[]*struct、map[string]interface
+    map | map[string]interface{} | 仅支持值类型为 map[string]string 
     slice | 支持 []string、[]struct、[]*struct | []struct、[]*struct 中不建议再嵌套,效率很低
