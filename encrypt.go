@@ -461,8 +461,12 @@ func setEncryptMap(val reflect.Value, option *Options) error {
 
 // setEncryptMapValue
 func setEncryptMapValue(key, v, sv reflect.Value, option *Options) error {
-	rn := []rune(fmt.Sprintf("%#v", sv))
-	vn := string(rn[1 : len(rn)-1])
+	vn := fmt.Sprintf("%#v", sv)
+	if strings.HasPrefix(vn, `"`) {
+		rn := []rune(vn)
+		vn = string(rn[1 : len(rn)-1])
+	}
+
 	// 值无效的情况跳过
 	if !sv.IsValid() || vn == "" || isEncryptText(vn, option) {
 		return nil
@@ -494,8 +498,11 @@ func setDecryptMap(val reflect.Value, option *Options) error {
 
 // setDecryptMapValue
 func setDecryptMapValue(key, v, sv reflect.Value, option *Options) error {
-	rn := []rune(fmt.Sprintf("%#v", sv))
-	vn := string(rn[1 : len(rn)-1])
+	vn := fmt.Sprintf("%#v", sv)
+	if strings.HasPrefix(vn, `"`) {
+		rn := []rune(vn)
+		vn = string(rn[1 : len(rn)-1])
+	}
 	// 值无效的情况跳过
 	if !sv.IsValid() || vn == "" || !isEncryptText(vn, option) {
 		return nil
