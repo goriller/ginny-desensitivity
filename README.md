@@ -66,6 +66,30 @@ fmt.Printf("%#v\n", acc)
 // Phone已经自动被加密
 ```
 
+* EncryptString/DecryptString 加解密字符串
+* EncryptStruct/DecryptStruct 加密文件
+* EncryptFile/DecryptFile 加解密文件, 支持struct、*struct, 并且支持嵌套 []string、[]struct、[]*struct、map[string]interface
+* EncryptSlice/DecryptSlice 加解密切片, 支持 []string、[]struct、[]*struct
+* EncryptMap/DecryptMap 加解密map, 仅支持 map[string]string 类型值, 其他类型忽略
+
+## 文件加密
+
+项目中经常有存储头像、证件照片等需求场景,对于此类文件需要加密存储,可以使用文件加解密函数
+
+
+```go
+plaintext, err := ioutil.ReadFile("./go.mod")
+assert.NoError(t, err)
+
+bt, err := EncryptFile(plaintext)
+assert.NoError(t, err)
+fmt.Printf("%#v\n", string(bt))
+
+bt, err = DecryptFile(bt)
+assert.NoError(t, err)
+fmt.Printf("%#v\n", string(bt))
+```
+
 # 问题
 
 - 1、脱敏的字段在参数传递时，并不会影响值(不会脱敏)，但是在涉及到字符串拼接等场景可能会出现问题，例如
@@ -135,6 +159,6 @@ fmt.Printf("%#v\n", acc)
 
     类型 | 加密支持类型 | 备注 |
     --- | --- | --- |
-    struct | struct 或 *struct | 支持嵌套嵌套 []string、[]struct、[]*struct、map[string]interface
-    map | map[string]interface{} | 仅支持 map[string]string 类型值
+    struct | struct 或 *struct | 支持嵌套 []string、[]struct、[]*struct、map[string]interface
+    map | map[string]interface{} | 仅支持值类型为 map[string]string 
     slice | 支持 []string、[]struct、[]*struct | []struct、[]*struct 中不建议再嵌套,效率很低
