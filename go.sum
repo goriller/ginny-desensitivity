@@ -1,7 +1,7 @@
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/gorillazer/ginny-encrypt v0.0.1 h1:oL3J1o5GyvcdrWXcCOtcEVkLqYttiVvXulYWZuw8/EM=
-github.com/gorillazer/ginny-encrypt v0.0.1/go.mod h1:oHiB0ZyWTWfb3eMlQTXAyQB8sa5kBfdPy4Hwufmc+1Q=
+github.com/goriller/ginny-encrypt v0.0.3 h1:C5TkiMRzGWRoRMMohDxAmUlodobRJo4CIyLKpvw/R94=
+github.com/goriller/ginny-encrypt v0.0.3/go.mod h1:Ll2E4qwCAi8BngLXl9tXJP9JsWNSlQx9mHutf6zvdnM=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
