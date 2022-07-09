@@ -11,7 +11,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/gorillazer/ginny-encrypt/aes"
+	"github.com/goriller/ginny-encrypt/aes"
 )
 
 var encryptFileLen = 100
